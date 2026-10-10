@@ -19,9 +19,9 @@ Ví dụ: “Áo thun A” có M/đen giá 150.000đ kho 10 và L/trắng giá 1
 
 Dùng VS Code để sửa code, terminal PowerShell để chạy Laravel, MySQL và công cụ quản lý CSDL để xem dữ liệu, trình duyệt để kiểm tra, GitHub Desktop hoặc Git để gửi code. Đọc [hướng dẫn chạy](README.md), [schema chung](SCHEMA.md) và [quy trình Git](README_GIT_WORKFLOW.md).
 
-Nhận danh mục từ Châu, Auth/quyền Admin từ Kiều và layout từ Châu. Chốt schema với mọi người trước khi viết migration. Bạn điều phối thiết kế, nhưng chủ module tự viết bảng của mình; tránh tạo hai migration cùng tạo một bảng.
+Category, Product/ProductVariant, Auth, layout và dữ liệu mẫu đã có. Danh làm CN02 ngay trên schema chung, không đợi Châu tạo danh mục. Không tạo lại migration nền; thay đổi schema mới phải thống nhất và dùng migration ALTER.
 
-Branch của bạn: `feature/tv2-products`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `laravel-eshopper/eshopper/` đã chọn cho bộ nền này.
+Branch của bạn: `feature/tv2-products`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `eshopper/` đã chọn cho bộ nền này.
 
 ## 3. Những file bạn cần làm
 
@@ -38,7 +38,7 @@ Tên file là gợi ý thiết kế; nếu nhóm đã có file tương đương 
 
 ## 4. Làm từng bước như thế nào?
 
-Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng seed để bắt đầu cùng lúc.
+Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng bản SQL/dữ liệu mẫu theo README để bắt đầu cùng lúc.
 
 ### Bước 1: Chốt bảy bảng và quan hệ
 
@@ -46,9 +46,9 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 **Xong bước này khi:** Mọi người dùng chung tên bảng, trường và quan hệ.
 
-### Bước 2: Tạo Product và ProductVariant
+### Bước 2: Kiểm tra Product và ProductVariant
 
-**Bạn làm:** Kiểm tra model/migration đã tồn tại trước. Tạo products với category_id; product_variants với product_id, sku, size, color, price, stock, is_active theo schema. Thêm FK, unique sku và unique product_id+size+color. Khai báo Product belongsTo Category/hasMany ProductVariant; ProductVariant belongsTo Product.
+**Bạn làm:** Đọc model Product/ProductVariant và migration đã có; đối chiếu FK, unique SKU và cặp product_id+size+color với SCHEMA.md. Thử đọc sản phẩm kèm biến thể trong MySQL. Không tạo lại bảng/model; tiếp tục controller, request và view CN02.
 
 **Xong bước này khi:** Một sản phẩm có nhiều size/màu và FK thật trong MySQL.
 
@@ -84,18 +84,16 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 ## 5. Tạo file và chạy kiểm tra bằng cách nào?
 
-Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/model/request:
+Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/request còn thiếu:
 
 ```powershell
 php artisan make:controller TenController
-php artisan make:model TenModel -m
 php artisan make:request TenRequest
 php artisan route:list
-php artisan migrate
 php artisan serve
 ```
 
-Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. `-m` tạo thêm migration, không tự điền các cột hoặc quan hệ. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
+Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. Model và migration nền đã có; không dùng make:model -m để tạo lại. Chỉ chạy php artisan migrate khi nhóm đã thêm migration mới. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
 
 Hiểu luồng cơ bản trước khi viết: **route** nhận đường dẫn → **controller** nhận yêu cầu → **request** kiểm tra dữ liệu → **model/service** xử lý MySQL/nghiệp vụ → **view Blade** hiển thị. Validation phải ở máy chủ, không chỉ JavaScript.
 

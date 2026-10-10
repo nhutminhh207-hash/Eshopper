@@ -1,6 +1,6 @@
 # Môi trường chung
 
-Source gốc: PHP ^8.3, Laravel ^13.17 theo composer.json; cài đúng composer.lock. Một dự án: DuAnLTMNM/laravel-eshopper/eshopper.
+Source gốc: PHP ^8.3, Laravel ^13.17 theo composer.json; cài đúng composer.lock. Một dự án: eshopper.
 
 - MySQL 8.x, bảng transactional InnoDB; mỗi máy một database fashion_shop.
 - Composer 2.x; VS Code; Git/GitHub Desktop; trình duyệt.

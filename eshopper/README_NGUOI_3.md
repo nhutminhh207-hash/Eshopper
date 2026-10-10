@@ -19,9 +19,9 @@ Ví dụ: giỏ có hai áo M/đen; đặt thành công tạo một đơn pendin
 
 Dùng VS Code để sửa code, terminal PowerShell để chạy Laravel, MySQL và công cụ quản lý CSDL để xem dữ liệu, trình duyệt để kiểm tra, GitHub Desktop hoặc Git để gửi code. Đọc [hướng dẫn chạy](README.md), [schema chung](SCHEMA.md) và [quy trình Git](README_GIT_WORKFLOW.md).
 
-Nhận giỏ CartItem và luồng sửa giỏ từ Nhựt, ProductVariant từ Danh, User/Auth từ Kiều, layout từ Châu. Thống nhất với Kiều về OrderService, trạng thái và hủy/hoàn kho. Chưa có giỏ thật thì chỉ chuẩn bị form/service, không coi checkout đã hoàn thành.
+CartItem, ProductVariant, User/Auth, layout, giỏ mẫu và OrderService đã có. Anh Tú làm checkout với giỏ mẫu ngay; phối hợp Nhựt và Kiều theo CONTRACTS.md rồi thử luồng tích hợp khi họ nối giao diện.
 
-Branch của bạn: `feature/tv3-checkout`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `laravel-eshopper/eshopper/` đã chọn cho bộ nền này.
+Branch của bạn: `feature/tv3-checkout`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `eshopper/` đã chọn cho bộ nền này.
 
 ## 3. Những file bạn cần làm
 
@@ -39,11 +39,11 @@ Tên file là gợi ý thiết kế; nếu nhóm đã có file tương đương 
 
 ## 4. Làm từng bước như thế nào?
 
-Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng seed để bắt đầu cùng lúc.
+Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng bản SQL/dữ liệu mẫu theo README để bắt đầu cùng lúc.
 
-### Bước 1: Tạo bảng và model đơn
+### Bước 1: Kiểm tra bảng và model đơn
 
-**Bạn làm:** Tạo orders và order_items đúng SCHEMA.md, không trùng migration người khác. orders có user_id, checkout_token unique, thông tin giao hàng, cod, pending và total_amount. order_items lưu bản chụp tên sản phẩm, SKU, size, màu, giá, số lượng và line_total. Thêm FK và các quan hệ Order/OrderItem.
+**Bạn làm:** Đọc orders/order_items, model Order/OrderItem và OrderService có sẵn. Đối chiếu checkout_token, thông tin giao hàng, snapshot và quan hệ với SCHEMA.md. Dùng giỏ mẫu để nối checkout ngay; không tạo lại bảng hoặc một OrderService khác.
 
 **Xong bước này khi:** Đơn lưu được dữ liệu độc lập với giá/tên sản phẩm thay đổi về sau.
 
@@ -59,9 +59,9 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 **Xong bước này khi:** Thiếu địa chỉ hoặc sửa giá gửi lên không tạo đơn sai.
 
-### Bước 4: Viết xử lý đặt hàng nguyên khối
+### Bước 4: Nối và kiểm tra xử lý đặt hàng nguyên khối
 
-**Bạn làm:** Trong DB::transaction: khóa dòng User → tìm đơn theo token và chủ sở hữu → đọc lại giỏ → khóa biến thể theo thứ tự ID bằng lockForUpdate → kiểm tra sản phẩm/biến thể đang bán, giá mới và đủ kho → tạo order/order_items → trừ kho → xóa giỏ. Nhựt sửa giỏ cũng phải khóa cùng User. Nếu giá đổi so với bản máy chủ ở lúc hiển thị checkout, yêu cầu khách xem và xác nhận lại giá mới trước khi tạo đơn.
+**Bạn làm:** Nối controller vào OrderService.checkout hiện có theo CONTRACTS.md và kiểm tra luồng trong DB::transaction: khóa dòng User → tìm đơn theo token và chủ sở hữu → đọc lại giỏ → khóa biến thể theo thứ tự ID bằng lockForUpdate → kiểm tra sản phẩm/biến thể đang bán, giá mới và đủ kho → tạo order/order_items → trừ kho → xóa giỏ. Nhựt sửa giỏ cũng phải khóa cùng User. Nếu giá đổi so với bản máy chủ ở lúc hiển thị checkout, yêu cầu khách xem và xác nhận lại giá mới trước khi tạo đơn.
 
 **Xong bước này khi:** Hoặc toàn bộ thao tác thành công, hoặc tất cả rollback; không có đơn dở/kho âm.
 
@@ -79,18 +79,16 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 ## 5. Tạo file và chạy kiểm tra bằng cách nào?
 
-Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/model/request:
+Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/request còn thiếu:
 
 ```powershell
 php artisan make:controller TenController
-php artisan make:model TenModel -m
 php artisan make:request TenRequest
 php artisan route:list
-php artisan migrate
 php artisan serve
 ```
 
-Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. `-m` tạo thêm migration, không tự điền các cột hoặc quan hệ. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
+Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. Model và migration nền đã có; không dùng make:model -m để tạo lại. Chỉ chạy php artisan migrate khi nhóm đã thêm migration mới. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
 
 Hiểu luồng cơ bản trước khi viết: **route** nhận đường dẫn → **controller** nhận yêu cầu → **request** kiểm tra dữ liệu → **model/service** xử lý MySQL/nghiệp vụ → **view Blade** hiển thị. Validation phải ở máy chủ, không chỉ JavaScript.
 

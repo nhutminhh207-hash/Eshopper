@@ -1,6 +1,6 @@
 # Fashion Shop — Bộ nền nhóm 5 người
 
-**Dự án Laravel chính:** DuAnLTMNM/laravel-eshopper/eshopper. Template gốc nằm tại DuAnLTMNM/template_html. Không tạo thêm một dự án Laravel riêng cho từng người.
+**Dự án Laravel chính:** eshopper. Asset giao diện đang dùng nằm tại eshopper/public/template/eshopper/. Không tạo thêm một dự án Laravel riêng cho từng người.
 
 ## Có gì trong bộ nền?
 
@@ -27,26 +27,37 @@ Mỗi người đã có dữ liệu mẫu của phần phụ thuộc để làm 
 
 ## Cài Windows / PowerShell
 
-Giải nén, mở folder DuAnLTMNM trong VS Code. Terminal:
+Clone hoặc tải ZIP repository, mở thư mục gốc trong VS Code. Trong Laragon bấm Start All để chạy MySQL; mở Terminal có PHP/Composer. Nếu tải ZIP, giải nén trước. Terminal:
 
 ```powershell
-cd laravel-eshopper/eshopper
+cd eshopper
 php -v
 composer install
-Copy-Item .env.example .env
+if (!(Test-Path .env)) { Copy-Item .env.example .env }
 ```
 
-Tạo database MySQL `fashion_shop` trên máy mình; chỉnh DB_USERNAME/DB_PASSWORD trong .env. DB_CONNECTION=mysql, DB_HOST=127.0.0.1, DB_PORT=3306. APP_ENV=local. Không chép .env cho người khác, không commit .env. Nếu đã có .env cần giữ, không chạy lệnh chép đè.
+Chỉnh DB_USERNAME/DB_PASSWORD trong .env theo MySQL trên máy mình. Laragon mặc định thường dùng root và mật khẩu trống; dùng thông tin thực tế của bạn. DB_CONNECTION=mysql, DB_HOST=127.0.0.1, DB_PORT=3306. APP_ENV=local. Không chép .env cho người khác, không commit .env. Nếu đã có .env cần giữ, không chạy lệnh chép đè.
+
+### Nhập database chung một lần
+
+Dùng HeidiSQL trong Laragon, kết nối MySQL trên máy mình → File → Load SQL file → chọn `eshopper/database/fashion_shop.sql` → chạy toàn bộ script (F9). File SQL có CREATE DATABASE, USE, bảng và dữ liệu mẫu nên không phải tạo từng bảng bằng tay.
+
+Chỉ import vào máy chưa có database này hoặc database mới trống. File có INSERT với ID cố định; import lại vào database đã có dữ liệu có thể gây lỗi trùng ID. Không xóa database đang có bài làm để import lại.
+
+Sau import: Refresh danh sách database, kiểm tra `fashion_shop` và các bảng. Mỗi người có bản database riêng, không kết nối vào máy nhóm trưởng; nhóm trưởng tắt máy vẫn làm được. Không dùng thư mục `mysql-8.4` được chép từ máy khác làm Data Directory. Giữ Data Directory của Laragon đang hoạt động; file `.sql` là bản trao đổi dữ liệu.
+
+### Mở website
 
 ```powershell
 php artisan key:generate
 php artisan optimize:clear
-php artisan migrate --seed
 php artisan storage:link
 php artisan serve
 ```
 
-Mở http://127.0.0.1:8000. Các trang nền không dùng @vite nên không cần npm cho nền này. Cài composer theo lock, không tự composer update toàn bộ.
+Chỉ chạy key:generate khi APP_KEY còn trống; nếu đã có key thì giữ lại. Mở http://127.0.0.1:8000. Giữ terminal serve đang chạy; lần sau bật MySQL rồi chạy lại php artisan serve từ eshopper/. Các trang nền không dùng @vite nên không cần npm cho nền này. Cài composer theo lock, không tự composer update toàn bộ.
+
+Sau khi đã import SQL, không chạy migrate --seed để khởi tạo lần nữa. Nếu không dùng SQL, có thể tạo database trống rồi chạy `php artisan migrate --seed` như một cách khởi tạo thay thế; chọn một cách cho mỗi máy. Khi nhóm thêm migration mới, pull code và chạy `php artisan migrate`; không dùng migrate:fresh trên dữ liệu cần giữ. Dữ liệu chỉnh trên máy một người không tự truyền sang máy khác qua Git. Thay đổi cấu trúc dùng migration; dữ liệu mẫu mới dùng seeder đã thống nhất hoặc SQL cập nhật có hướng dẫn riêng.
 
 ## Tài khoản demo local
 
@@ -78,10 +89,10 @@ Script chạy route:list, compile Blade và FoundationTest (SQLite in-memory đ�
 
 ## Đưa lên GitHub
 
-Giữ một repository hiện có. Tạo branch `setup/nen-chung` rồi chép source vào đúng thư mục DuAnLTMNM tương ứng; không tạo DuAnLTMNM/DuAnLTMNM lồng nhau. Xem Changes; không commit .env, vendor, node_modules, log, database.sqlite hoặc .git từ ZIP. Commit/Push/PR/merge, cả nhóm pull main rồi tạo branch riêng. Bộ ZIP này không tự tạo branch hay thay đổi repository GitHub.
+Repository này đã là bộ nền chung. Cả nhóm clone/pull main, rồi tạo branch riêng theo README của mình. Đọc README_GIT_WORKFLOW.md; gửi PR thay vì làm chung trực tiếp trên main. Nhóm trưởng thêm tài khoản GitHub của thành viên tại Settings → Collaborators nếu họ cần push branch vào repository.
 
-Bản gốc đã được giữ nguyên trong file upload. ZIP bàn giao loại dependency/cache/dữ liệu cục bộ, giữ lock files; chạy composer install trên mỗi máy.
+Không commit .env, vendor, node_modules, log hoặc dữ liệu MySQL cục bộ. Chỉ chia sẻ database qua file SQL mẫu đã kiểm tra. Thư mục mysql-8.4 ở gốc là dữ liệu máy cục bộ; không cần để phát triển, không sao chép vào Laragon của thành viên.
 
 ## Template
 
-EShopper v1.0.0, HTML Codex/ThemeWagon. Giữ credit và LICENSE.txt. CSS/JS gốc còn trong template_html và public/template/eshopper. Layout nền đơn giản, Châu tiếp tục chuyển bố cục EShopper đầy đủ. Không thêm nút giả ngoài phạm vi.
+EShopper v1.0.0, HTML Codex/ThemeWagon. Giữ credit và LICENSE.txt. CSS/JS/ảnh đang dùng ở public/template/eshopper. Layout EShopper đã được ghép vào Blade; Châu kiểm tra, hoàn thiện và thống nhất giao diện, không dựng lại từ đầu. Không thêm nút giả ngoài phạm vi.

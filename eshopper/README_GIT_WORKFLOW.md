@@ -48,7 +48,7 @@ GitHub → Pull requests → New pull request, base `main`, compare branch của
 - Anh Tú checkout và Kiều quản lý đơn dùng cùng quy tắc OrderService, kho và trạng thái.
 - Nhựt tổng hợp kiểm thử và slide; các chủ module cung cấp kết quả thật.
 
-Không chia thành năm dự án Laravel độc lập. Mỗi máy dùng CSDL riêng, cùng migration/seeder.
+Không chia thành năm dự án Laravel độc lập. Mỗi máy dùng CSDL riêng, cùng schema và file SQL mẫu; migration mới được pull và chạy trên từng máy. Thay đổi dữ liệu local không tự đồng bộ qua Git.
 
 ## Conflict
 
