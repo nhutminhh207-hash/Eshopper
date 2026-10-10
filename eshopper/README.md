@@ -1,58 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fashion Shop — Bộ nền nhóm 5 người
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Dự án Laravel chính:** DuAnLTMNM/laravel-eshopper/eshopper. Template gốc nằm tại DuAnLTMNM/template_html. Không tạo thêm một dự án Laravel riêng cho từng người.
 
-## About Laravel
+## Có gì trong bộ nền?
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Bảy bảng nghiệp vụ + role users; model và quan hệ cố định.
+- Seed: 1 Admin, 2 User, 3 danh mục, 15 sản phẩm, 30 biến thể, 4 dòng giỏ và 2 đơn pending với snapshot; đơn mẫu đã trừ kho một lần.
+- Auth đăng ký/đăng nhập/đăng xuất và middleware admin/user.
+- Layout Blade, asset EShopper local, trang nền đọc dữ liệu mẫu, Shop phân trang.
+- CartService và OrderService dùng chung; CheckoutRequest; 8 test nền và script verify.
+- Route/field/service contract, phân công và lịch 7 ngày.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Đây là bộ nền để phát triển song song, **chưa hoàn thành CN01–CN06**. Các mutation nghiệp vụ chưa nối controller trả HTTP 501, không giả báo thành công. Chưa chạy PHP/MySQL ở môi trường tạo file; cần nhóm thực hiện verify trước khi ghi đã chạy được.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Ai làm gì?
 
-## Learning Laravel
+| Người | Phần chính | Đọc |
+|---|---|---|
+| Kiều | Auth, CN06, tích hợp | [Người 1](README_NGUOI_1.md) |
+| Danh | CN02, CSDL | [Người 2](README_NGUOI_2.md) |
+| Anh Tú | CN05, Use Case | [Người 3](README_NGUOI_3.md) |
+| Châu | CN01, layout/Word | [Người 4](README_NGUOI_4.md) |
+| Nhựt | CN03/CN04, test/slide | [Người 5](README_NGUOI_5.md) |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Mỗi người đã có dữ liệu mẫu của phần phụ thuộc để làm ngay. Không tạo lại model/migration có sẵn.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Cài Windows / PowerShell
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+Giải nén, mở folder DuAnLTMNM trong VS Code. Terminal:
 
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
-
-```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+```powershell
+cd laravel-eshopper/eshopper
+php -v
+composer install
+Copy-Item .env.example .env
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Tạo database MySQL `fashion_shop` trên máy mình; chỉnh DB_USERNAME/DB_PASSWORD trong .env. DB_CONNECTION=mysql, DB_HOST=127.0.0.1, DB_PORT=3306. APP_ENV=local. Không chép .env cho người khác, không commit .env. Nếu đã có .env cần giữ, không chạy lệnh chép đè.
 
-## Contributing
+```powershell
+php artisan key:generate
+php artisan optimize:clear
+php artisan migrate --seed
+php artisan storage:link
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Mở http://127.0.0.1:8000. Các trang nền không dùng @vite nên không cần npm cho nền này. Cài composer theo lock, không tự composer update toàn bộ.
 
-## Code of Conduct
+## Tài khoản demo local
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | Email | Mật khẩu demo |
+|---|---|---|
+| Admin | admin@example.test | DemoShop2026! |
+| User A | usera@example.test | DemoShop2026! |
+| User B | userb@example.test | DemoShop2026! |
 
-## Security Vulnerabilities
+Đây là dữ liệu thử, không dùng cho triển khai public. Seeder chỉ chạy local/testing, không reset kho khi chạy lại. Dữ liệu demo mặc định chỉ được tạo lần đầu; không tự ghi đè tài khoản trùng email đã tồn tại. Nếu cần reset, dùng database demo riêng, không database có dữ liệu cần giữ.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Đọc trước khi viết module
 
-## License
+1. [Checklist nền](BAT_DAU_CUNG_NHAU.md).
+2. [Schema](SCHEMA.md), [phạm vi](SCOPE.md), [môi trường](ENVIRONMENT.md).
+3. [Route](ROUTES.md), [hợp đồng dữ liệu/service](CONTRACTS.md).
+4. README của mình và [lịch 7 ngày](LO_TRINH.md).
+5. [Git workflow](README_GIT_WORKFLOW.md), [bàn giao](BAN_GIAO_MAU.md), [kiểm thử](KIEM_THU.md).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Kiểm tra trước khi cả nhóm nhận nền
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/verify.ps1
+```
+
+Script chạy route:list, compile Blade và FoundationTest (SQLite in-memory độc lập, không reset MySQL của bạn). PHPUnit cần PDO SQLite. Vẫn phải thử migration/seed và khóa kho T14 trên MySQL; test SQLite không chứng minh chống cạnh tranh kho.
+
+Đọc [kết quả kiểm tra và giới hạn](VERIFICATION.md). Ai chạy được ghi máy/ngày/commit/kết quả vào đó.
+
+## Đưa lên GitHub
+
+Giữ một repository hiện có. Tạo branch `setup/nen-chung` rồi chép source vào đúng thư mục DuAnLTMNM tương ứng; không tạo DuAnLTMNM/DuAnLTMNM lồng nhau. Xem Changes; không commit .env, vendor, node_modules, log, database.sqlite hoặc .git từ ZIP. Commit/Push/PR/merge, cả nhóm pull main rồi tạo branch riêng. Bộ ZIP này không tự tạo branch hay thay đổi repository GitHub.
+
+Bản gốc đã được giữ nguyên trong file upload. ZIP bàn giao loại dependency/cache/dữ liệu cục bộ, giữ lock files; chạy composer install trên mỗi máy.
+
+## Template
+
+EShopper v1.0.0, HTML Codex/ThemeWagon. Giữ credit và LICENSE.txt. CSS/JS gốc còn trong template_html và public/template/eshopper. Layout nền đơn giản, Châu tiếp tục chuyển bố cục EShopper đầy đủ. Không thêm nút giả ngoài phạm vi.

@@ -1,0 +1,52 @@
+erDiagram
+    USERS ||--o{ CART_ITEMS : owns
+    USERS ||--o{ ORDERS : places
+    CATEGORIES ||--o{ PRODUCTS : contains
+    PRODUCTS ||--o{ PRODUCT_VARIANTS : has
+    PRODUCT_VARIANTS ||--o{ CART_ITEMS : selected
+    PRODUCT_VARIANTS ||--o{ ORDER_ITEMS : referenced
+    ORDERS ||--o{ ORDER_ITEMS : snapshots
+    USERS {
+        bigint id PK
+        string email UK
+        string role
+    }
+    CATEGORIES {
+        bigint id PK
+        string slug UK
+    }
+    PRODUCTS {
+        bigint id PK
+        bigint category_id FK
+        string slug UK
+    }
+    PRODUCT_VARIANTS {
+        bigint id PK
+        bigint product_id FK
+        string sku UK
+        string size
+        string color
+        decimal price
+        int stock
+    }
+    CART_ITEMS {
+        bigint id PK
+        bigint user_id FK
+        bigint variant_id FK
+        int quantity
+    }
+    ORDERS {
+        bigint id PK
+        bigint user_id FK
+        string checkout_token UK
+        string status
+        decimal total_amount
+    }
+    ORDER_ITEMS {
+        bigint id PK
+        bigint order_id FK
+        bigint variant_id FK
+        decimal unit_price
+        int quantity
+        decimal line_total
+    }
