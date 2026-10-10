@@ -19,9 +19,9 @@ Ví dụ: tạo danh mục “Áo thun”, Danh chọn danh mục này khi thêm
 
 Dùng VS Code để sửa code, terminal PowerShell để chạy Laravel, MySQL và công cụ quản lý CSDL để xem dữ liệu, trình duyệt để kiểm tra, GitHub Desktop hoặc Git để gửi code. Đọc [hướng dẫn chạy](README.md), [schema chung](SCHEMA.md) và [quy trình Git](README_GIT_WORKFLOW.md).
 
-Nhận dự án chung/Auth từ Kiều, chốt Category với Danh. Dùng template EShopper gốc và giữ LICENSE/credit. Bạn cung cấp khung giao diện cho mọi người; mỗi người tự nối dữ liệu chức năng của mình vào view.
+Category, Auth và layout EShopper đã có. Châu làm CN01 với danh mục/sản phẩm mẫu ngay, đồng thời hoàn thiện giao diện chung; giữ LICENSE/credit và không dựng lại layout.
 
-Branch của bạn: `feature/tv4-categories-layout`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `laravel-eshopper/eshopper/` đã chọn cho bộ nền này.
+Branch của bạn: `feature/tv4-categories-layout`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `eshopper/` đã chọn cho bộ nền này.
 
 ## 3. Những file bạn cần làm
 
@@ -38,7 +38,7 @@ Tên file là gợi ý thiết kế; nếu nhóm đã có file tương đương 
 
 ## 4. Làm từng bước như thế nào?
 
-Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng seed để bắt đầu cùng lúc.
+Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng bản SQL/dữ liệu mẫu theo README để bắt đầu cùng lúc.
 
 ### Bước 1: Mở template và nhận diện phần chung
 
@@ -46,21 +46,21 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 **Xong bước này khi:** Biết trang gốc nào dùng cho từng chức năng và giữ nguồn template.
 
-### Bước 2: Đưa CSS/JS/ảnh vào Laravel
+### Bước 2: Kiểm tra CSS/JS/ảnh trong Laravel
 
-**Bạn làm:** Chép css, js, lib, img vào public/template/eshopper/. Đổi đường dẫn bằng asset(). Dùng Bootstrap 4 theo template; không nạp thêm Bootstrap 5/Tailwind vào cùng layout hoặc nạp thư viện trùng.
+**Bạn làm:** Asset đã có trong public/template/eshopper/; kiểm tra đường dẫn và chỉ bổ sung file còn thiếu. Đổi đường dẫn bằng asset(). Dùng Bootstrap 4 theo template; không nạp thêm Bootstrap 5/Tailwind vào cùng layout hoặc nạp thư viện trùng.
 
 **Xong bước này khi:** Ảnh/CSS/JS hoạt động trong trang Laravel.
 
-### Bước 3: Tạo layout Blade dùng chung
+### Bước 3: Hoàn thiện layout Blade dùng chung
 
-**Bạn làm:** Tạo layouts/store.blade.php và layouts/admin.blade.php, partials header/footer/menu. Layout đặt @yield(content), trang con dùng @extends/@section. Thử một trang trước, rồi giao layout cho Kiều/Danh/Anh Tú/Nhựt. Liên kết dùng route() sau khi route được Kiều ghép; không gọi tên route chưa tồn tại.
+**Bạn làm:** Sửa layouts/store.blade.php và layouts/admin.blade.php cùng partials hiện có. Layout đặt @yield(content), trang con dùng @extends/@section. Thử một trang trước, rồi giao layout cho Kiều/Danh/Anh Tú/Nhựt. Liên kết dùng route() sau khi route được Kiều ghép; không gọi tên route chưa tồn tại.
 
 **Xong bước này khi:** Các trang dùng một layout, sửa header một nơi là cập nhật toàn bộ.
 
-### Bước 4: Tạo Category và bảng danh mục
+### Bước 4: Kiểm tra Category và bảng danh mục
 
-**Bạn làm:** Kiểm tra file hiện có, tạo categories với name/slug unique, description nullable. Category hasMany Product. Đồng bộ FK products.category_id với Danh. Không tạo lại migration nếu bảng đã do nhóm tạo.
+**Bạn làm:** Đọc model Category, migration categories và quan hệ products.category_id có sẵn. Dùng danh mục mẫu có sản phẩm để thử quy tắc chặn xóa. Không tạo lại bảng/model; tiếp tục CRUD.
 
 **Xong bước này khi:** Danh mục liên kết thật với sản phẩm trong MySQL.
 
@@ -84,18 +84,16 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 ## 5. Tạo file và chạy kiểm tra bằng cách nào?
 
-Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/model/request:
+Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/request còn thiếu:
 
 ```powershell
 php artisan make:controller TenController
-php artisan make:model TenModel -m
 php artisan make:request TenRequest
 php artisan route:list
-php artisan migrate
 php artisan serve
 ```
 
-Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. `-m` tạo thêm migration, không tự điền các cột hoặc quan hệ. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
+Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. Model và migration nền đã có; không dùng make:model -m để tạo lại. Chỉ chạy php artisan migrate khi nhóm đã thêm migration mới. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
 
 Hiểu luồng cơ bản trước khi viết: **route** nhận đường dẫn → **controller** nhận yêu cầu → **request** kiểm tra dữ liệu → **model/service** xử lý MySQL/nghiệp vụ → **view Blade** hiển thị. Validation phải ở máy chủ, không chỉ JavaScript.
 

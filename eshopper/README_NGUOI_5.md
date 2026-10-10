@@ -19,9 +19,9 @@ Ví dụ: cùng áo nhưng M/đen và L/trắng là hai dòng giỏ. Thêm M/đe
 
 Dùng VS Code để sửa code, terminal PowerShell để chạy Laravel, MySQL và công cụ quản lý CSDL để xem dữ liệu, trình duyệt để kiểm tra, GitHub Desktop hoặc Git để gửi code. Đọc [hướng dẫn chạy](README.md), [schema chung](SCHEMA.md) và [quy trình Git](README_GIT_WORKFLOW.md).
 
-Nhận Product/Variant/Category và seed từ Danh, layout từ Châu, Auth từ Kiều. Gửi CartItem và hợp đồng khóa giỏ cho Anh Tú để đặt hàng; không đổi tên variant_id giữa chừng.
+Product/Variant/Category, Auth, layout, CartItem và CartService đã có. Nhựt làm tìm/lọc và giỏ bằng dữ liệu mẫu ngay; nối controller/request/view vào service, phối hợp Anh Tú theo CONTRACTS.md.
 
-Branch của bạn: `feature/tv5-shop-cart`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `laravel-eshopper/eshopper/` đã chọn cho bộ nền này.
+Branch của bạn: `feature/tv5-shop-cart`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `eshopper/` đã chọn cho bộ nền này.
 
 ## 3. Những file bạn cần làm
 
@@ -39,7 +39,7 @@ Tên file là gợi ý thiết kế; nếu nhóm đã có file tương đương 
 
 ## 4. Làm từng bước như thế nào?
 
-Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng seed để bắt đầu cùng lúc.
+Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng bản SQL/dữ liệu mẫu theo README để bắt đầu cùng lúc.
 
 ### Bước 1: Làm danh sách và chi tiết sản phẩm
 
@@ -59,15 +59,15 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 **Xong bước này khi:** Trang 2 vẫn giữ từ khóa, size/màu và khoảng giá đã chọn.
 
-### Bước 4: Tạo bảng giỏ
+### Bước 4: Kiểm tra bảng giỏ
 
-**Bạn làm:** Tạo CartItem và cart_items với user_id, variant_id, quantity; unique user_id+variant_id. Khai báo belongsTo User và ProductVariant với FK variant_id. Giỏ yêu cầu role user, không dùng cho Admin.
+**Bạn làm:** Đọc CartItem và cart_items đã có với user_id, variant_id, quantity; unique user_id+variant_id. Kiểm tra quan hệ belongsTo User và ProductVariant với FK variant_id; không tạo lại model/bảng. Giỏ yêu cầu role user, không dùng cho Admin.
 
 **Xong bước này khi:** Giỏ nằm trong MySQL, mỗi dòng ứng với đúng biến thể.
 
 ### Bước 5: Làm thêm vào giỏ
 
-**Bạn làm:** Nhận variant_id và quantity, validate quantity nguyên ít nhất 1. Trong transaction khóa User cùng cách Anh Tú dùng; kiểm tra product/variant đang bán và tổng số lượng sau cộng không vượt stock. Lấy user_id từ người đăng nhập; cùng biến thể thì cộng dồn, khác biến thể thì thêm dòng.
+**Bạn làm:** Nhận variant_id và quantity, validate quantity nguyên ít nhất 1. Gọi CartService.add đã có, kiểm tra transaction khóa User cùng cách Anh Tú dùng; kiểm tra product/variant đang bán và tổng số lượng sau cộng không vượt stock. Lấy user_id từ người đăng nhập; cùng biến thể thì cộng dồn, khác biến thể thì thêm dòng.
 
 **Xong bước này khi:** Thêm hai lần cộng đúng và không vượt kho.
 
@@ -85,18 +85,16 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 ## 5. Tạo file và chạy kiểm tra bằng cách nào?
 
-Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/model/request:
+Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/request còn thiếu:
 
 ```powershell
 php artisan make:controller TenController
-php artisan make:model TenModel -m
 php artisan make:request TenRequest
 php artisan route:list
-php artisan migrate
 php artisan serve
 ```
 
-Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. `-m` tạo thêm migration, không tự điền các cột hoặc quan hệ. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
+Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. Model và migration nền đã có; không dùng make:model -m để tạo lại. Chỉ chạy php artisan migrate khi nhóm đã thêm migration mới. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
 
 Hiểu luồng cơ bản trước khi viết: **route** nhận đường dẫn → **controller** nhận yêu cầu → **request** kiểm tra dữ liệu → **model/service** xử lý MySQL/nghiệp vụ → **view Blade** hiển thị. Validation phải ở máy chủ, không chỉ JavaScript.
 

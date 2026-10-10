@@ -19,9 +19,9 @@ Ví dụ kết quả: khách tạo tài khoản và mua hàng; Admin xem đơn, 
 
 Dùng VS Code để sửa code, terminal PowerShell để chạy Laravel, MySQL và công cụ quản lý CSDL để xem dữ liệu, trình duyệt để kiểm tra, GitHub Desktop hoặc Git để gửi code. Đọc [hướng dẫn chạy](README.md), [schema chung](SCHEMA.md) và [quy trình Git](README_GIT_WORKFLOW.md).
 
-Nhận layout Bootstrap 4 từ Châu và schema từ Danh. Phần đơn hàng cần Order, OrderItem và dữ liệu đơn do Anh Tú tạo. Làm Auth trước, làm CN06 sau khi Anh Tú có đơn mẫu. Chưa có đơn thì dùng Seeder demo thống nhất với Anh Tú, không tự đặt tên trường khác.
+Auth, layout, model Order/OrderItem và hai đơn mẫu đã có. Kiều bắt đầu kiểm tra Auth/quyền và làm CN06 ngay bằng đơn mẫu; phối hợp Anh Tú khi tích hợp checkout, không đợi checkout xong mới làm.
 
-Branch của bạn: `feature/tv1-auth-orders`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `laravel-eshopper/eshopper/` đã chọn cho bộ nền này.
+Branch của bạn: `feature/tv1-auth-orders`. Tạo branch từ main mới nhất; tên branch là quy ước, chưa tự tạo trên GitHub. Các đường dẫn bên dưới tính từ thư mục Laravel `eshopper/` đã chọn cho bộ nền này.
 
 ## 3. Những file bạn cần làm
 
@@ -40,11 +40,11 @@ Tên file là gợi ý thiết kế; nếu nhóm đã có file tương đương 
 
 ## 4. Làm từng bước như thế nào?
 
-Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng seed để bắt đầu cùng lúc.
+Các bước có model/migration/seed/Auth/layout đã được làm trong bộ nền: đọc và kiểm tra file hiện có, không tạo lại. Tiếp tục bước controller/form/validation/kiểm thử còn thiếu. Tất cả thành viên dùng bản SQL/dữ liệu mẫu theo README để bắt đầu cùng lúc.
 
 ### Bước 1: Chuẩn bị dự án chung
 
-**Bạn làm:** Dự án chung đã chốt: laravel-eshopper/eshopper/. Kiểm tra PHP và Composer, cấu hình MySQL theo README gốc; chạy trang welcome trên máy mình. Ghi phiên bản thật vào ENVIRONMENT.md. Mời nhóm clone cùng repository; mỗi người cấu hình .env trên máy riêng.
+**Bạn làm:** Dự án chung đã chốt: eshopper/. Kiểm tra PHP và Composer, cấu hình MySQL theo README gốc; chạy trang welcome trên máy mình. Ghi phiên bản thật vào ENVIRONMENT.md. Mời nhóm clone cùng repository; mỗi người cấu hình .env trên máy riêng.
 
 **Xong bước này khi:** Cả nhóm biết thư mục nào là dự án chính và có thể mở trang Laravel.
 
@@ -92,18 +92,16 @@ Các bước có model/migration/seed/Auth/layout đã được làm trong bộ 
 
 ## 5. Tạo file và chạy kiểm tra bằng cách nào?
 
-Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/model/request:
+Mở terminal tại thư mục Laravel, không phải thư mục gốc chứa hai dự án. Ví dụ tạo controller/request còn thiếu:
 
 ```powershell
 php artisan make:controller TenController
-php artisan make:model TenModel -m
 php artisan make:request TenRequest
 php artisan route:list
-php artisan migrate
 php artisan serve
 ```
 
-Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. `-m` tạo thêm migration, không tự điền các cột hoặc quan hệ. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
+Thay tên mẫu bằng tên ở mục 3; chỉ chạy lệnh tạo nếu file chưa có. Model và migration nền đã có; không dùng make:model -m để tạo lại. Chỉ chạy php artisan migrate khi nhóm đã thêm migration mới. Các file Blade tự tạo bằng VS Code trong resources/views. Tra SCHEMA.md để điền trường và FK chính xác. Migration mới cần được nhóm rà trước khi chạy; không dùng migrate:fresh trên database có dữ liệu cần giữ.
 
 Hiểu luồng cơ bản trước khi viết: **route** nhận đường dẫn → **controller** nhận yêu cầu → **request** kiểm tra dữ liệu → **model/service** xử lý MySQL/nghiệp vụ → **view Blade** hiển thị. Validation phải ở máy chủ, không chỉ JavaScript.
 

@@ -2,7 +2,7 @@
 
 ## Những thứ đã chốt trong source này
 
-- [x] Một dự án chung: laravel-eshopper/eshopper.
+- [x] Một dự án chung: eshopper.
 - [x] Tên bảng, quan hệ, role, size/màu, VND và COD.
 - [x] Migration/model/Seeder dùng chung; dữ liệu độc lập cho từng phần.
 - [x] Layout, asset, tên section, thông báo success/error.
@@ -11,8 +11,8 @@
 
 ## Nhóm cần làm trên máy mình trước khi viết module
 
-- [ ] Kiều chạy migrate --seed và verify; ghi lỗi thật, không chỉ nhìn file.
-- [ ] Cả năm người cài/pull cùng commit nền và mở trang Shop.
+- [ ] Kiều import SQL theo README trên database mới rồi chạy verify; ghi lỗi thật, không chỉ nhìn file.
+- [ ] Cả năm người cài/pull cùng commit nền, import SQL trên MySQL riêng và mở trang Shop.
 - [ ] Cả năm đọc SCHEMA/ROUTES/CONTRACTS, xác nhận giữ hợp đồng.
 - [ ] Kiểm tra User A/B có giỏ và đơn; Admin bị chặn mua hàng; User bị chặn quản trị.
 - [ ] Ghi PHP/Composer/MySQL thật, MSSV/GitHub/branch của từng người.
